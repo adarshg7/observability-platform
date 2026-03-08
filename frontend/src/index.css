@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --font: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+
+  --bg:      #03050d;
+  --surface: #080c14;
+  --card:    #0c1120;
+  --hover:   #101828;
+  --border:  rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+
+  /* Hardcoded hex — recharts CANNOT read CSS variables inside SVG */
+  --blue:   #3b82f6;
+  --green:  #10b981;
+  --yellow: #f59e0b;
+  --red:    #ef4444;
+  --purple: #8b5cf6;
+  --cyan:   #06b6d4;
+
+  --t1: #f1f5f9;
+  --t2: #94a3b8;
+  --t3: #475569;
+
+  --sw: 220px;   /* sidebar width */
+
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--t1);
+  -webkit-font-smoothing: antialiased;
+  color-scheme: dark;
+}
+
+body { margin: 0; min-height: 100vh; background: var(--bg); font-family: var(--font); }
+
+/* Kill Vite default centering */
+#root { max-width: none !important; padding: 0 !important; text-align: left !important; }
+
+h1,h2,h3,h4 { font-family: var(--font); font-weight: 600; letter-spacing: -0.02em; }
+button { font-family: var(--font); cursor: pointer; }
+code, pre { font-family: var(--mono); }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+
+/* Animations */
+@keyframes fadeUp  { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+@keyframes pulse   { 0%,100% { opacity:1; } 50% { opacity:.35; } }
+@keyframes spin    { to { transform:rotate(360deg); } }
+@keyframes shimmer { 0% { background-position:-600px 0; } 100% { background-position:600px 0; } }
+
+.fade-up { animation: fadeUp .35s ease both; }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--card) 25%, var(--hover) 50%, var(--card) 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 8px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+.mobile-only  { display: none !important; }
+.desktop-only { display: block !important; }
+
+@media (max-width: 768px) {
+  :root { --sw: 0px; }
+  .mobile-only  { display: flex !important; }
+  .desktop-only { display: none !important; }
+}
+
+/* ─── Sidebar (CSS-driven, not JS window.innerWidth) ─── */
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  transition: transform 0.25s ease;
+}
+
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 150;
+  backdrop-filter: blur(3px);
+}
+
+/* main-content — offset by sidebar on desktop */
+.main-content {
+  flex: 1;
+  margin-left: 220px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Mobile overrides ─── */
+@media (max-width: 768px) {
+  :root { --sw: 0px; }
+
+  /* Sidebar slides off-screen by default on mobile */
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: none;
+  }
+
+  /* When open class is added, slide in */
+  .sidebar--open {
+    transform: translateX(0);
+    box-shadow: 8px 0 40px rgba(0,0,0,0.5);
+  }
+
+  /* Backdrop only shows on mobile when open */
+  .sidebar-backdrop--visible {
+    display: block;
+  }
+
+  /* No left margin on mobile — sidebar is overlay */
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
